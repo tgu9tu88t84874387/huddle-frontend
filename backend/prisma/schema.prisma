@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String?  @unique
+  phone     String?  @unique
+  password  String
+  avatar    String?
+  bio       String?
+  status    String   @default("offline")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions  Session[]
+  messages  Message[]
+  chats     ChatMember[]
+  posts     Post[]
+  e2eKeys   E2eKey[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique
+  refreshToken String?  @unique
+  device       String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+
+model Chat {
+  id        String   @id @default(cuid())
+  type      String   @default("user")
+  name      String?
+  avatar    String?
+  isPrivate Boolean  @default(false)
+  createdAt DateTime @default(now())
+  members   ChatMember[]
+  messages  Message[]
+}
+
+model ChatMember {
+  id       String @id @default(cuid())
+  chatId   String
+  userId   String
+  role     String @default("member")
+  chat     Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([chatId, userId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  userId    String
+  type      String   @default("text")
+  content   String?
+  encrypted String
+  mediaKey  String?
+  mediaUrl  String?
+  e2e       Boolean  @default(false)
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([chatId, createdAt])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String?
+  content   String?
+  mediaUrl  String?
+  poll      String
+  likes     Int      @default(0)
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model E2eKey {
+  id          String   @id @default(cuid())
+  userId      String
+  publicKey   String
+  fingerprint String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

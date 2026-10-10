@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Huddle Admin 🛡</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:#0a0e1a;color:#e8eef7;min-height:100vh;font-size:14px;line-height:1.5}
+  a{color:#6d5dfc;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* === Экран входа === */
+  .login-screen{display:flex;align-items:center;justify-content:center;height:100vh;padding:20px}
+  .login-box{background:#131826;padding:32px;border-radius:16px;border:1px solid #1e293b;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .login-box h1{color:#6d5dfc;margin-bottom:8px;font-size:26px;font-weight:900}
+  .login-box p{color:#64748b;font-size:12px;margin-bottom:22px}
+  .login-box input{width:100%;padding:13px;border:1px solid #1e293b;border-radius:10px;
+    background:#0a0e1a;color:#e8eef7;font-family:inherit;font-size:14px;
+    margin-bottom:12px;outline:none;transition:.15s}
+  .login-box input:focus{border-color:#6d5dfc}
+  .login-box button{width:100%;padding:13px;background:#6d5dfc;color:#fff;border:0;
+    border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+  .login-box button:hover{background:#5b4be8}
+  #login-error{color:#ef4444;font-size:12px;margin-top:10px;min-height:16px}
+
+  /* === Приложение === */
+  .app{display:none;min-height:100vh;flex-direction:column}
+  .app.visible{display:flex}
+
+  .topbar{background:#131826;border-bottom:1px solid #1e293b;padding:12px 20px;
+    display:flex;align-items:center;gap:14px;flex-shrink:0;position:sticky;top:0;z-index:10}
+  .topbar h1{color:#6d5dfc;font-size:17px;font-weight:900;flex-shrink:0}
+  .topbar .status{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b}
+  .topbar .status .dot{width:8px;height:8px;border-radius:50%;background:#10b981;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .topbar .spacer{flex:1}
+  .topbar button{background:transparent;border:1px solid #1e293b;color:#94a3b8;
+    padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}
+  .topbar button:hover{background:#1a2032;color:#e8eef7}
+
+  .layout{display:flex;flex:1;overflow:hidden}
+  .sidebar{width:230px;background:#131826;border-right:1px solid #1e293b;
+    padding:14px 10px;overflow-y:auto;flex-shrink:0}
+  .sidebar .nav-item{padding:11px 14px;border-radius:10px;cursor:pointer;
+    color:#94a3b8;font-size:13px;font-weight:600;margin-bottom:3px;
+    display:flex;align-items:center;gap:10px;transition:.15s}
+  .sidebar .nav-item:hover{background:#1a2032;color:#e8eef7}
+  .sidebar .nav-item.active{background:rgba(109,93,252,.15);color:#a09aff}
+
+  .content{flex:1;overflow-y:auto;padding:22px}
+  .content h2{color:#e8eef7;font-size:20px;margin-bottom:16px;font-weight:800}
+
+  /* === Статистика === */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:12px;margin-bottom:24px}
+  .stat-card{background:#131826;border:1px solid #1e293b;border-radius:14px;
+    padding:16px;transition:.15s}
+  .stat-card:hover{border-color:#25324a}
+  .stat-card .num{font-size:28px;font-weight:900;color:#6d5dfc;line-height:1}
+  .stat-card .lbl{font-size:11px;color:#64748b;margin-top:6px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em}
+
+  /* === Таблицы === */
+  .card{background:#131826;border:1px solid #1e293b;border-radius:14px;
+    padding:16px;margin-bottom:14px;overflow:hidden}
+  .card h3{color:#a855f7;font-size:14px;margin-bottom:12px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.05em}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;padding:10px 8px;color:#64748b;font-weight:700;
+    border-bottom:1px solid #1e293b;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  td{padding:10px 8px;border-bottom:1px solid #1a2338;color:#cbd5e1}
+  tr.clickable{cursor:pointer;transition:.12s}
+  tr.clickable:hover td{background:#1a2032}
+  tr:last-child td{border-bottom:0}
+
+  .badge{display:inline-block;padding:3px 9px;border-radius:10px;
+    font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .badge.online{background:rgba(16,185,129,.2);color:#6ee7b7}
+  .badge.offline{background:rgba(100,116,139,.2);color:#94a3b8}
+  .badge.admin{background:rgba(245,158,11,.2);color:#fcd34d}
+  .badge.type{background:rgba(109,93,252,.15);color:#c1baff;font-family:ui-monospace,monospace;text-transform:none}
+
+  /* === Поиск === */
+  .search-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .search-bar input,.search-bar select{flex:1;min-width:150px;padding:10px 14px;
+    border:1px solid #1e293b;border-radius:10px;background:#0a0e1a;color:#e8eef7;
+    font-family:inherit;font-size:13px;outline:none;transition:.15s}
+  .search-bar input:focus,.search-bar select:focus{border-color:#6d5dfc}
+  .search-bar button{padding:10px 18px;background:#6d5dfc;color:#fff;border:0;
+    border-radius:10px;cursor:pointer;font-family:inherit;font-weight:700;font-size:13px}
+  .search-bar button:hover{background:#5b4be8}
+
+  /* === Сообщения чата === */
+  .chat-view{background:#0a0e1a;border-radius:12px;padding:16px;
+    max-height:600px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .chat-msg{max-width:70%;padding:9px 13px;border-radius:14px;font-size:13.5px;
+    word-wrap:break-word;line-height:1.4}
+  .chat-msg.from-a{background:linear-gradient(135deg,#6d5dfc,#a855f7);color:#fff;
+    margin-left:auto;border-bottom-right-radius:4px}
+  .chat-msg.from-b{background:#1a2032;color:#e8eef7;
+    margin-right:auto;border-bottom-left-radius:4px}
+  .chat-msg .meta{font-size:10px;opacity:.7;margin-top:4px;text-align:right}
+  .chat-msg .who{font-size:10px;font-weight:800;opacity:.9;margin-bottom:3px;display:block}
+
+  /* === Детали (модалка) === */
+  .detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);
+    z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+  .detail-overlay.visible{display:flex}
+  .detail-box{background:#131826;border:1px solid #1e293b;border-radius:16px;
+    max-width:900px;width:100%;max-height:88vh;overflow-y:auto;padding:24px}
+  .detail-box h3{color:#6d5dfc;font-size:18px;margin-bottom:14px;font-weight:900;
+    display:flex;justify-content:space-between;align-items:center}
+  .detail-box h3 button{background:transparent;border:1px solid #1e293b;
+    color:#94a3b8;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:16px}
+  .detail-box h4{color:#a855f7;font-size:13px;margin:18px 0 8px;
+    text-transform:uppercase;letter-spacing:.05em;font-weight:800}
+  .detail-box pre{background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;
+    padding:12px;font-size:11px;color:#cbd5e1;overflow-x:auto;
+    white-space:pre-wrap;word-break:break-all;max-height:280px;overflow-y:auto;
+    font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.5}
+
+  .empty{text-align:center;color:#64748b;padding:40px 20px;font-size:13px}
+
+  .rec-card{display:flex;align-items:center;gap:12px;padding:12px;
+    background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;margin-bottom:8px}
+  .rec-card .ico{width:40px;height:40px;background:rgba(109,93,252,.15);
+    border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+  .rec-card .info{flex:1;min-width:0}
+  .rec-card .info b{display:block;font-size:13px;margin-bottom:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rec-card .info span{display:block;font-size:11px;color:#64748b}
+  .rec-card button{padding:8px 14px;border:0;border-radius:8px;
+    cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;flex-shrink:0}
+  .rec-card .play{background:#6d5dfc;color:#fff}
+  .rec-card .dl{background:#1a2032;color:#cbd5e1}
+
+  /* Видео-плеер */
+  .rec-player{display:none;margin-top:12px;padding:12px;
+    background:#0a0e1a;border-radius:12px}
+  .rec-player.visible{display:block}
+  .rec-player video{width:100%;max-height:400px;border-radius:10px;background:#000}
+</style>
+</head>
+<body>
+
+<!-- === ЭКРАН ВХОДА === -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <h1>🛡 Huddle Admin</h1>
+    <p>Введите административный ключ для доступа</p>
+    <input type="password" id="admin-key-input" placeholder="ADMIN_KEY" autofocus
+           onkeydown="if(event.key==='Enter')doAdminLogin()">
+    <button onclick="doAdminLogin()">Войти в админку</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<!-- === ПРИЛОЖЕНИЕ === -->
+<div class="app" id="app">
+  <div class="topbar">
+    <h1>🛡 Huddle Admin</h1>
+    <div class="status"><span class="dot"></span><span id="top-status">подключено</span></div>
+    <div class="spacer"></div>
+    <button onclick="refreshCurrent()">🔄 Обновить</button>
+    <button onclick="exportAll()">⬇️ Экспорт</button>
+    <button onclick="adminLogout()">Выйти</button>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-item active" data-view="stats" onclick="switchView('stats')">📊 Статистика</div>
+      <div class="nav-item" data-view="users" onclick="switchView('users')">👥 Пользователи</div>
+      <div class="nav-item" data-view="messages" onclick="switchView('messages')">💬 Сообщения</div>
+      <div class="nav-item" data-view="logs" onclick="switchView('logs')">📋 Логи</div>
+      <div class="nav-item" data-view="recordings" onclick="switchView('recordings')">🎥 Записи звонков</div>
+      <div class="nav-item" data-view="fingerprints" onclick="switchView('fingerprints')">🖥️ Устройства</div>
+    </div>
+
+    <div class="content" id="content">
+      <!-- Сюда рендерится активная вьюха -->
+    </div>
+  </div>
+</div>
+
+<!-- === МОДАЛКА ДЕТАЛЕЙ === -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-box" id="detail-box"></div>
+</div>
+
+<script>
+/* ============================================================
+   Huddle Admin — frontend
+   ============================================================ */
+'use strict';
+
+const API = 'http://localhost:8080';
+let ADMIN_KEY = '';
+let CURRENT_VIEW = 'stats';
+let CURRENT_USER_FILTER = '';
+
+/* ---------- Логин ---------- */
+function doAdminLogin(){
+  const key = document.getElementById('admin-key-input').value.trim();
+  if(!key){ document.getElementById('login-error').textContent = 'Введите ключ'; return; }
+
+  // Проверяем ключ через запрос к stats
+  fetch(`${API}/api/admin/stats?key=${encodeURIComponent(key)}`)
+    .then(r => r.json())
+    .then(d => {
+      if(d.error){ document.getElementById('login-error').textContent = d.error; return; }
+      ADMIN_KEY = key;
+      sessionStorage.setItem('huddle_admin_key', key);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+      loadView('stats');
+    })
+    .catch(e => {
+      document.getElementById('login-error').textContent = 'Сервер недоступен: ' + e.message;
+    });
+}
+
+function adminLogout(){
+  sessionStorage.removeItem('huddle_admin_key');
+  ADMIN_KEY = '';
+  location.reload();
+}
+
+// Автовход, если ключ уже сохранён
+(function autoLogin(){
+  const saved = sessionStorage.getItem('huddle_admin_key');
+  if(saved){
+    document.getElementById('admin-key-input').value = saved;
+    doAdminLogin();
+  }
+})();
+
+/* ---------- Переключение вьюх ---------- */
+function switchView(view){
+  CURRENT_VIEW = view;
+  document.querySelectorAll('.sidebar .nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.view === view);
+  });
+  loadView(view);
+}
+
+function loadView(view){
+  const c = document.getElementById('content');
+  c.innerHTML = '<div class="empty">Загрузка…</div>';
+  if(view === 'stats')         renderStats();
+  else if(view === 'users')    renderUsers();
+  else if(view === 'messages') renderMessages();
+  else if(view === 'logs')     renderLogs();
+  else if(view === 'recordings') renderRecordings();
+  else if(view === 'fingerprints') renderFingerprints();
+}
+
+function refreshCurrent(){ loadView(CURRENT_VIEW); }
+
+/* ---------- API helper ---------- */
+async function api(path){
+  const sep = path.includes('?') ? '&' : '?';
+  const r = await fetch(`${API}${path}${sep}key=${encodeURIComponent(ADMIN_KEY)}`);
+  if(!r.ok){
+    const e = await r.json().catch(() => ({error: 'HTTP ' + r.status}));
+    throw new Error(e.error || 'Ошибка');
+  }
+  return await r.json();
+}
+
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtBytes(n){
+  n = Number(n) || 0;
+  if(n < 1024) return n + ' Б';
+  if(n < 1048576) return (n/1024).toFixed(1) + ' КБ';
+  if(n < 1073741824) return (n/1048576).toFixed(1) + ' МБ';
+  return (n/1073741824).toFixed(2) + ' ГБ';
+}
+function fmtDate(iso){
+  if(!iso) return '—';
+  try { return new Date(iso).toLocaleString('ru-RU'); } catch { return iso; }
+}
+function fmtTimeShort(iso){
+  if(!iso) return '';
+  try { return new Date(iso).toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}); } catch { return ''; }
+}
+
+/* ============================================================
+   СТАТИСТИКА
+   ============================================================ */
+async function renderStats(){
+  const c = document.getElementById('content');
+  try {
+    const d = await api('/api/admin/stats');
+    c.innerHTML = `
+      <h2>📊 Статистика</h2>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="num">${d.totalUsers}</div><div class="lbl">Пользователей</div></div>
+        <div class="stat-card"><div class="num">${d.totalMessages}</div><div class="lbl">Сообщений</div></div>
+        <div class="stat-card"><div class="num">${d.totalRecordings}</div><div class="lbl">Записей звонков</div></div>
+        <div class="stat-card"><div class="num">${d.totalLogs}</div><div class="lbl">Событий в логе</div></div>
+      </div>
+      <div class="card">
+        <h3>🟢 Онлайн сейчас (${(d.onlineNow || []).length})</h3>
+        ${(d.onlineNow && d.onlineNow.length)
+          ? '<div>' + d.onlineNow.map(u => `<span class="badge online" style="margin:4px 4px 0 0">${esc(u)}</span>`).join('') + '</div>'
+          : '<div class="empty">Никто не онлайн</div>'}
+      </div>
+      <div class="card">
+        <h3>🕒 Серверное время</h3>
+        <div style="font-size:15px;color:#cbd5e1">${esc(fmtDate(d.serverTime))}</div>
+      </div>
+    `;
+  } catch(e){ c.innerHTML = `<div class="empty">Ошибка: ${esc(e.message)}</div>`; }
+}
+
+/* ============================================================
+   ПОЛЬЗОВАТЕЛИ
+   ============================================================ */
+async function renderUsers(){
+  const c = document.getElementById('content');
+  try {
+    const d = await api('/api/admin/users');
+    if(!d.users.length){ c.innerHTML = '<h2>👥 Пользователи</h2><div class="empty">Пока нет пользователей</div>'; return; }
+
+    c.innerHTML = `
+      <h2>👥 Пользователи (${d.count})</h2>
+      <div class="search-bar">
+        <input type="text" id="user-search" placeholder="Поиск по имени/email..." oninput="filterUsersTable()">
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Пользователь</th>
+              <th>Email</th>
+              <th>Статус</th>
+              <th>Сообщений</th>
+              <th>Последний IP</th>
+              <th>Последний вход</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            ${d.users.map(u => `
+              <tr class="clickable" data-search="${esc((u.username||'').toLowerCase())} ${esc((u.email||'').toLowerCase())}"
+                  onclick="showUserDetail('${esc(u.username)}')">
+                <td><b>@${esc(u.username)}</b></td>
+                <td>${esc(u.email || '—')}</td>
+                <td>${u.isOnline ? '<span class="badge online">● online</span>' : '<span class="badge offline">○ offline</span>'}</td>
+                <td><span style="color:#6d5dfc;font-weight:700">${u.messagesSent || 0}</span> / ${u.messagesReceived || 0}</td>
+                <td style="font-family:ui-monospace,monospace;font-size:11px">${esc(u.lastIp || '—')}</td>
+                <td style="font-size:11px;color:#94a3b8">${esc(fmtDate(u.lastSeen))}</td>
+                <td style="color:#6d5dfc;font-size:18px">›</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch(e){ c.innerHTML = `<div class="empty">Ошибка: ${esc(e.message)}</div>`; }
+}
+
+function filterUsersTable(){
+  const q = document.getElementById('user-search').value.toLowerCase();
+  document.querySelectorAll('#users-tbody tr').forEach(tr => {
+    tr.style.display = (tr.dataset.search || '').includes(q) ? '' : 'none';
+  });
+}
+
+async function showUserDetail(username){
+  const overlay = document.getElementById('detail-overlay');
+  const box = document.getElementById('detail-box');
+  overlay.classList.add('visible');
+  box.innerHTML = '<div class="empty">Загрузка…</div>';
+
+  try {
+    const d = await api('/api/admin/user/' + encodeURIComponent(username));
+    const u = d.user;
+    box.innerHTML = `
+      <h3>👤 @${esc(u.username)} <button onclick="closeDetail()">✕</button></h3>
+
+      <div class="stats-grid" style="margin-bottom:16px">
+        <div class="stat-card"><div class="num">${d.messagesCount}</div><div class="lbl">Сообщений</div></div>
+        <div class="stat-card"><div class="num">${d.fingerprints.length}</div><div class="lbl">Сессий</div></div>
+        <div class="stat-card"><div class="num">${d.logs.length}</div><div class="lbl">Событий</div></div>
+      </div>
+
+      <h4>📌 Основное</h4>
+      <table style="font-size:13px">
+        <tr><td style="color:#64748b">ID</td><td style="font-family:monospace">${esc(u.id)}</td></tr>
+        <tr><td style="color:#64748b">Email</td><td>${esc(u.email || '—')}</td></tr>
+        <tr><td style="color:#64748b">Телефон</td><td>${esc(u.phone || '—')}</td></tr>
+        <tr><td style="color:#64748b">Зарегистрирован</td><td>${esc(fmtDate(u.createdAt))}</td></tr>
+        <tr><td style="color:#64748b">Первый раз виден</td><td>${esc(fmtDate(d.firstSeen))}</td></tr>
+        <tr><td style="color:#64748b">Последний раз виден</td><td>${esc(fmtDate(d.lastSeen))}</td></tr>
+      </table>
+
+      ${d.fingerprints.length ? `
+        <h4>🖥️ Устройства и сессии (${d.fingerprints.length})</h4>
+        ${d.fingerprints.slice().reverse().slice(0,10).map(fp => `
+          <div style="background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;padding:12px;margin-bottom:8px;font-size:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <b style="color:#a09aff">${esc(fmtDate(fp.at))}</b>
+              <span class="badge type" style="font-size:10px">${esc(fp.ip || '—')}</span>
+            </div>
+            <div style="color:#94a3b8;line-height:1.5">
+              ${fp.fingerprint ? `
+                🌍 <b>${esc(fp.fingerprint.timezone || '—')}</b> ·
+                🖥️ ${esc(fp.fingerprint.screen || '—')} ·
+                🗣️ ${esc(fp.fingerprint.language || '—')}<br>
+                💻 ${esc((fp.fingerprint.platform || '').slice(0,50))}<br>
+                🌐 ${esc((fp.userAgent || '').slice(0,80))}...
+              ` : 'нет данных'}
+            </div>
+          </div>
+        `).join('')}
+      ` : '<h4>🖥️ Устройства</h4><div class="empty">Нет данных об устройствах</div>'}
+
+      ${d.logs.length ? `
+        <h4>📋 Последние события (${d.logs.length})</h4>
+        <div style="background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;padding:12px;max-height:300px;overflow-y:auto;font-family:ui-monospace,monospace;font-size:11px">
+          ${d.logs.slice().reverse().map(l => `
+            <div style="padding:5px 0;border-bottom:1px solid #1a2338">
+              <span style="color:#a09aff;font-weight:700">${esc(l.action)}</span>
+              <span style="color:#64748b;margin-left:8px">${esc(fmtDate(l.at))}</span>
+              ${l.ip ? `<span style="color:#475569;margin-left:8px">${esc(l.ip)}</span>` : ''}
+              ${l.data ? `<div style="color:#94a3b8;margin-top:3px">${esc(JSON.stringify(l.data).slice(0,150))}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    `;
+  } catch(e){
+    box.innerHTML = `<h3>Ошибка <button onclick="closeDetail()">✕</button></h3><div class="empty">${esc(e.message)}</div>`;
+  }
+}
+
+function closeDetail(){ document.getElementById('detail-overlay').classList.remove('visible'); }
+
+/* ============================================================
+   СООБЩЕНИЯ (все + переписка)
+   ============================================================ */
+async function renderMessages(userA, userB){
+  const c = document.getElementById('content');
+
+  try {
+    let url = '/api/admin/messages?limit=500';
+    if(userA && userB){
+      // Берём оба направления и объединяем вручную
+      const [ab, ba] = await Promise.all([
+        api(`/api/admin/messages?limit=500&from=${encodeURIComponent(userA)}&to=${encodeURIComponent(userB)}`),
+        api(`/api/admin/messages?limit=500&from=${encodeURIComponent(userB)}&to=${encodeURIComponent(userA)}`)
+      ]);
+      const all = [...ab.messages, ...ba.messages].sort((x, y) =>
+        new Date(x.createdAt) - new Date(y.createdAt)
+      );
+
+      c.innerHTML = `
+        <h2>💬 Переписка: @${esc(userA)} ↔ @${esc(userB)}</h2>
+        <div class="search-bar">
+          <button onclick="renderMessages()">← Назад ко всем</button>
+        </div>
+        ${all.length ? `
+          <div class="chat-view">
+            ${all.map(m => renderChatBubble(m, userA)).join('')}
+          </div>
+          <div style="text-align:center;margin-top:12px;color:#64748b;font-size:12px">
+            Всего: ${all.length} сообщений
+          </div>
+        ` : '<div class="empty">Переписка пуста</div>'}
+      `;
+      return;
+    }
+
+    // Иначе — показываем все сообщения таблицей
+    const d = await api(url);
+    if(!d.messages.length){
+      c.innerHTML = '<h2>💬 Сообщения</h2><div class="empty">Сообщений пока нет</div>';
+      return;
+    }
+
+    const pairs = {};
+    d.messages.forEach(m => {
+      const key = [m.from, m.to].sort().join('|');
+      pairs[key] = (pairs[key] || 0) + 1;
+    });
+
+    c.innerHTML = `
+      <h2>💬 Все сообщения (${d.count})</h2>
+      <div class="search-bar">
+        <input type="text" id="msg-search" placeholder="Поиск по тексту..." oninput="filterMessagesTable()">
+      </div>
+      <div class="card">
+        <h3>💬 Переписки</h3>
+        ${Object.entries(pairs).map(([key, count]) => {
+          const [a, b] = key.split('|');
+          return `<div style="padding:10px;border-bottom:1px solid #1a2338;cursor:pointer"
+                       onclick="renderMessages('${esc(a)}','${esc(b)}')"
+                       onmouseover="this.style.background='#1a2032'"
+                       onmouseout="this.style.background='transparent'">
+            <b>@${esc(a)} ↔ @${esc(b)}</b>
+            <span style="color:#6d5dfc;margin-left:8px">${count} сообщений</span>
+            <span style="float:right;color:#6d5dfc;font-size:18px">›</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="card">
+        <h3>📋 Последние 500 сообщений</h3>
+        <table>
+          <thead>
+            <tr><th>Время</th><th>От</th><th>Кому</th><th>Тип</th><th>Текст</th></tr>
+          </thead>
+          <tbody id="msg-tbody">
+            ${d.messages.slice().reverse().map(m => {
+              const text = (m.payload && m.payload.content) || (m.payload && m.payload.text) || '';
+              return `<tr class="clickable"
+                          data-search="${esc((text||'').toLowerCase())} ${esc((m.from||'').toLowerCase())} ${esc((m.to||'').toLowerCase())}"
+                          onclick="renderMessages('${esc(m.from)}','${esc(m.to)}')">
+                <td style="font-size:11px;color:#64748b">${esc(fmtDate(m.createdAt))}</td>
+                <td><b>@${esc(m.from)}</b></td>
+                <td>@${esc(m.to)}</td>
+                <td><span class="badge type">${esc(m.type || 'text')}</span></td>
+                <td style="max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((text||'').slice(0,120))}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch(e){ c.innerHTML = `<div class="empty">Ошибка: ${esc(e.message)}</div>`; }
+}
+
+function renderChatBubble(m, perspective){
+  const isFromA = m.from === perspective;
+  const text = (m.payload && m.payload.content) || (m.payload && m.payload.text) || '';
+  const type = m.type || 'text';
+  let body = esc(text);
+  if(type === 'photo') body = '📷 ' + body;
+  else if(type === 'audio') body = '🎙️ ' + body;
+  else if(type === 'circle') body = '⭕ ' + body;
+  else if(type === 'video') body = '🎬 ' + body;
+
+  return `
+    <div class="chat-msg ${isFromA ? 'from-a' : 'from-b'}">
+      <span class="who">@${esc(m.from)}</span>
+      ${body}
+      <div class="meta">${esc(fmtTimeShort(m.createdAt))}</div>
+    </div>
+  `;
+}
+
+function filterMessagesTable(){
+  const q = document.getElementById('msg-search').value.toLowerCase();
+  document.querySelectorAll('#msg-tbody tr').forEach(tr => {
+    tr.style.display = (tr.dataset.search || '').includes(q) ? '' : 'none';
+  });
+}
+
+/* ============================================================
+   ЛОГИ
+   ============================================================ */
+async function renderLogs(){
+  const c = document.getElementById('content');
+  try {
+    const d = await api('/api/admin/logs?limit=500');
+    if(!d.logs.length){ c.innerHTML = '<h2>📋 Логи</h2><div class="empty">Событий пока нет</div>'; return; }
+
+    c.innerHTML = `
+      <h2>📋 Логи (${d.count})</h2>
+      <div class="search-bar">
+        <input type="text" id="log-search" placeholder="Поиск по действию или пользователю..." oninput="filterLogsTable()">
+        <select id="log-filter" onchange="filterLogsTable()">
+          <option value="">Все действия</option>
+          <option value="register">register</option>
+          <option value="login">login</option>
+          <option value="ws_register">ws_register</option>
+          <option value="message_sent">message_sent</option>
+          <option value="call_record_start">call_record_start</option>
+          <option value="call_record_stop">call_record_stop</option>
+          <option value="fingerprint_saved">fingerprint_saved</option>
+          <option value="profile_update">profile_update</option>
+        </select>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Время</th><th>Пользователь</th><th>Действие</th><th>IP</th><th>Данные</th></tr>
+          </thead>
+          <tbody id="log-tbody">
+            ${d.logs.map(l => `
+              <tr data-search="${esc((l.action||'').toLowerCase())} ${esc((l.username||'').toLowerCase())}"
+                  data-action="${esc(l.action||'')}">
+                <td style="font-size:11px;color:#64748b;white-space:nowrap">${esc(fmtDate(l.at))}</td>
+                <td>${l.username ? '<b>@' + esc(l.username) + '</b>' : '—'}</td>
+                <td><span class="badge type">${esc(l.action)}</span></td>
+                <td style="font-family:ui-monospace,monospace;font-size:11px">${esc(l.ip || '—')}</td>
+                <td style="font-size:11px;color:#94a3b8;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.data ? JSON.stringify(l.data) : '—')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch(e){ c.innerHTML = `<div class="empty">Ошибка: ${esc(e.message)}</div>`; }
+}
+
+function filterLogsTable(){
+  const q = document.getElementById('log-search').value.toLowerCase();
+  const act = document.getElementById('log-filter').value;
+  document.querySelectorAll('#log-tbody tr').forEach(tr => {
+    const matchQ = (tr.dataset.search || '').includes(q);
+    const matchA = !act || tr.dataset.action === act;
+    tr.style.display = (matchQ && matchA) ? '' : 'none';
+  });
+}
+
+/* ============================================================
+   ЗАПИСИ ЗВОНКОВ
+   ============================================================ */
+async function renderRecordings(){
+  const c = document.getElementById('content');
+  try {
+    const d = await api('/api/admin/recordings');
+    if(!d.recordings.length){
+      c.innerHTML = '<h2>🎥 Записи звонков</h2><div class="empty">Записей пока нет</div>';
+      return;
+    }
+    c.innerHTML = `
+      <h2>🎥 Записи звонков (${d.count})</h2>
+      ${d.recordings.map(r => `
+        <div class="rec-card">
+          <div class="ico">🎥</div>
+          <div class="info">
+            <b>${esc(r.filename)}</b>
+            <span>${fmtBytes(r.size)} · ${esc(fmtDate(r.createdAt))}</span>
+          </div>
+          <button class="play" onclick="playRecording('${esc(r.filename)}')">▶ Смотреть</button>
+          <button class="dl" onclick="downloadRecording('${esc(r.filename)}')">⬇</button>
+        </div>
+      `).join('')}
+      <div class="rec-player" id="rec-player">
+        <video id="rec-video" controls autoplay playsinline></video>
+      </div>
+    `;
+  } catch(e){ c.innerHTML = `<div class="empty">Ошибка: ${esc(e.message)}</div>`; }
+}
+
+function playRecording(filename){
+  const p = document.getElementById('rec-player');
+  const v = document.getElementById('rec-video');
+  v.src = `${API}/recordings/${encodeURIComponent(filename)}`;
+  p.classList.add('visible');
+  v.play().catch(() => {});
+  p.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function downloadRecording(filename){
+  window.open(`${API}/recordings/${encodeURIComponent(filename)}`, '_blank');
+}
+
+/* ============================================================
+   FINGERPRINTS
+   ============================================================ */
+async function renderFingerprints(){
+  const c = document.getElementById('content');
+  try {
+    const d = await api('/api/admin/fingerprints');
+    if(!d.fingerprints || !Object.keys(d.fingerprints).length){
+      c.innerHTML = '<h2>🖥️ Устройства</h2><div class="empty">Данных пока нет</div>';
+      return;
+    }
+    c.innerHTML = `
+      <h2>🖥️ Устройства (${d.count} пользователей)</h2>
+      ${Object.entries(d.fingerprints).map(([username, arr]) => `
+        <div class="card">
+          <h3>👤 @${esc(username)} — ${arr.length} сессий</h3>
+          ${arr.slice().reverse().slice(0, 5).map(fp => `
+            <div style="background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;padding:12px;margin-bottom:8px;font-size:12px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <b style="color:#a09aff">${esc(fmtDate(fp.at))}</b>
+                <span class="badge type">${esc(fp.ip || '—')}</span>
+              </div>
+              ${fp.fingerprint ? `
+                <div style="color:#94a3b8;line-height:1.6">
+                  🌍 ${esc(fp.fingerprint.timezone || '—')} ·
+                  🖥️ ${esc(fp.fingerprint.screen || '—')} ·
+                  🗣️ ${esc(fp.fingerprint.language || '—')}<br>
+                  💻 ${esc(fp.fingerprint.platform || '—')} ·
+                  ⚙️ CPU: ${esc(String(fp.fingerprint.hardwareConcurrency || '—'))} ·
+                  💾 RAM: ${esc(String(fp.fingerprint.deviceMemory || '—'))}<br>
+                  🌐 ${esc((fp.userAgent || '').slice(0,100))}...
+                </div>
+              ` : '<span style="color:#64748b">Нет данных</span>'}
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+    `;
+  } catch(e){ c.innerHTML = `<div class="empty">Ошибка: ${esc(e.message)}</div>`; }
+}
+
+/* ============================================================
+   ЭКСПОРТ
+   ============================================================ */
+function exportAll(){
+  window.open(`${API}/api/admin/export?key=${encodeURIComponent(ADMIN_KEY)}`, '_blank');
+}
+
+/* ============================================================
+   Автозакрытие модалки по клику на фон
+   ============================================================ */
+document.getElementById('detail-overlay').addEventListener('click', (e) => {
+  if(e.target === e.currentTarget) closeDetail();
+});
+
+/* ============================================================
+   Горячая клавиша Escape
+   ============================================================ */
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeDetail();
+});
+
+console.log('✅ Huddle Admin loaded');
+</script>
+
+</body>
+</html>

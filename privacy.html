@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Политика конфиденциальности — Huddle</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236d5dfc'/><text x='50' y='74' font-size='68' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>H</text></svg>">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0e1a;
+    color: #e8eef7;
+    line-height: 1.65;
+    padding: 24px 16px;
+    min-height: 100vh;
+  }
+  .container { max-width: 780px; margin: 0 auto; }
+
+  /* === ЗАГОЛОВОК === */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #6d5dfc, #a855f7);
+    margin-bottom: 18px;
+    box-shadow: 0 12px 32px rgba(109,93,252,.35);
+    position: relative;
+  }
+  .logo svg {
+    width: 40px;
+    height: 40px;
+    fill: #ffffff;
+  }
+  h1 {
+    color: #6d5dfc;
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .updated {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  /* === СЕКЦИИ === */
+  h2 {
+    color: #a855f7;
+    font-size: 17px;
+    font-weight: 800;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  p {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+  }
+  ul {
+    padding-left: 22px;
+    margin-bottom: 16px;
+  }
+  li {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+  }
+  b, strong { color: #e8eef7; }
+  a {
+    color: #6d5dfc;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(109,93,252,.4);
+  }
+  a:hover { border-bottom-style: solid; }
+  code {
+    background: rgba(109,93,252,.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, 'Courier New', monospace;
+    font-size: 12px;
+    color: #c4b5fd;
+  }
+
+  /* === КАРТОЧКИ === */
+  .card {
+    background: #131826;
+    border: 1px solid #1e293b;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .card.info { border-left: 3px solid #6d5dfc; }
+  .card.warn { border-left: 3px solid #f59e0b; }
+  .card h3 {
+    font-size: 14px;
+    color: #e8eef7;
+    margin-bottom: 8px;
+    font-weight: 800;
+  }
+  .card p, .card li { font-size: 13px; margin-bottom: 6px; }
+
+  /* === ТАБЛИЦА === */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  th {
+    text-align: left;
+    padding: 8px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid #1e293b;
+  }
+  td {
+    padding: 10px 8px;
+    color: #cbd5e1;
+    border-bottom: 1px solid #1a2338;
+  }
+  td:first-child { color: #a09aff; font-weight: 700; }
+  tr:last-child td { border-bottom: 0; }
+
+  /* === ФУТЕР === */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #1e293b;
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #6d5dfc;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 16px;
+    text-decoration: none;
+  }
+  .back-btn:hover { background: #5b4be8; border-bottom-style: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="logo">
+      <!-- Иконка щита с галочкой = защита и конфиденциальность -->
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+      </svg>
+    </div>
+    <h1>Политика конфиденциальности</h1>
+    <div class="updated">Последнее обновление: 7 октября 2026 г.</div>
+  </div>
+
+  <p>
+    Настоящая Политика конфиденциальности (далее — «Политика») описывает, какие данные собирает мессенджер
+    <b>Huddle</b> (далее — «Сервис»), как они используются, хранятся и защищаются. Политика составлена
+    в соответствии с требованиями Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных».
+  </p>
+
+  <div class="card info">
+    <h3>📌 Кратко</h3>
+    <p>Мы собираем данные, необходимые для работы мессенджера: имя, email, сообщения и метаданные переписки. Данные хранятся на нашем сервере, не продаются третьим лицам. Вы можете в любой момент экспортировать или удалить свои данные.</p>
+  </div>
+
+  <h2>1️⃣ Какие данные мы собираем</h2>
+
+  <p><b>1.1. Данные, которые вы предоставляете сами:</b></p>
+  <ul>
+    <li><b>Имя пользователя</b> (username) — для входа и идентификации</li>
+    <li><b>Email</b> — для входа, восстановления доступа и уведомлений</li>
+    <li><b>Номер телефона</b> (по желанию) — для входа по SMS и дополнительной защиты</li>
+    <li><b>Пароль</b> — хранится в виде хеша <code>bcrypt</code>, восстановить его невозможно</li>
+    <li><b>Аватар, имя, био</b> — для профиля (по желанию)</li>
+  </ul>
+
+  <p><b>1.2. Данные переписки:</b></p>
+  <ul>
+    <li><b>Тексты сообщений</b> — что вы пишете другим пользователям</li>
+    <li><b>Метаданные</b> — кто с кем, когда и как долго общался</li>
+    <li><b>Медиа</b> (фото, видео, голосовые) — хранятся на вашем устройстве и передаются получателю через защищённое соединение</li>
+    <li><b>Записи звонков</b> — если вы нажмёте кнопку «Запись», файл сохранится на сервере</li>
+    <li><b>Истории</b> — публикуются для ваших контактов на 24 часа</li>
+  </ul>
+
+  <p><b>1.3. Логи и техническая информация:</b></p>
+  <ul>
+    <li>Регистрации, входы, изменения профиля</li>
+    <li>Ошибки и сбои в работе приложения</li>
+    <li>Действия в интерфейсе (для улучшения UX)</li>
+  </ul>
+
+  <h2>2️⃣ Зачем мы собираем данные</h2>
+
+  <ul>
+    <li><b>Работа мессенджера</b> — доставка сообщений, звонков, историй</li>
+    <li><b>Идентификация</b> — вход в аккаунт с любого устройства</li>
+    <li><b>Защита от спама и мошенничества</b> — выявление ботов и взломов</li>
+    <li><b>Улучшение работы</b> — анализ ошибок и популярных функций</li>
+    <li><b>Исполнение требований закона</b> — ответы на запросы правоохранительных органов (только по решению суда)</li>
+  </ul>
+
+  <h2>3️⃣ Кто имеет доступ к данным</h2>
+
+  <div class="card info">
+    <h3>👤 Администрация Huddle</h3>
+    <p>Администраторы Сервиса имеют <b>технический доступ</b> к вашим данным для поддержки работы мессенджера. Доступ ограничен и логируется.</p>
+  </div>
+
+  <div class="card warn">
+    <h3>⚠️ Третьи лица</h3>
+    <p>Мы <b>не продаём</b> и <b>не передаём</b> ваши данные рекламным сетям, аналитическим сервисам и другим компаниям.</p>
+    <p>Исключение — требования правоохранительных органов по решению суда.</p>
+  </div>
+
+  <h2>4️⃣ Сколько времени храним данные</h2>
+
+  <table>
+    <tr>
+      <th>Тип данных</th>
+      <th>Срок хранения</th>
+    </tr>
+    <tr>
+      <td>Аккаунт</td>
+      <td>До удаления вами</td>
+    </tr>
+    <tr>
+      <td>Сообщения</td>
+      <td>До удаления вами или администратором</td>
+    </tr>
+    <tr>
+      <td>Метаданные сессий</td>
+      <td>Последние 50 сессий</td>
+    </tr>
+    <tr>
+      <td>Логи действий</td>
+      <td>Последние 10 000 событий</td>
+    </tr>
+    <tr>
+      <td>Записи звонков</td>
+      <td>До удаления вами</td>
+    </tr>
+    <tr>
+      <td>Истории</td>
+      <td>24 часа (автоматически)</td>
+    </tr>
+  </table>
+
+  <h2>5️⃣ Ваши права</h2>
+
+  <p>В соответствии со ст. 14 152-ФЗ вы имеете право:</p>
+
+  <ul>
+    <li>✅ <b>Получить копию своих данных</b> — кнопка «Экспорт данных» в профиле</li>
+    <li>✅ <b>Удалить все свои данные</b> — кнопка «Удалить аккаунт» в профиле</li>
+    <li>✅ <b>Отозвать согласие</b> на обработку — приведёт к удалению аккаунта</li>
+    <li>✅ <b>Исправить данные</b> — изменить в настройках профиля</li>
+  </ul>
+
+  <h2>6️⃣ Cookies и локальное хранилище</h2>
+
+  <p>Сервис использует:</p>
+  <ul>
+    <li><b>localStorage</b> — для хранения сессии, черновиков, настроек темы</li>
+    <li><b>IndexedDB</b> — для хранения медиа (фото, видео, голосовых) на вашем устройстве</li>
+    <li><b>sessionStorage</b> — для временных данных (админ-ключ)</li>
+  </ul>
+  <p>Cookies <b>не используются</b>. Все данные хранятся локально в вашем браузере, кроме тех, что передаются на сервер для работы мессенджера.</p>
+
+  <h2>7️⃣ Ваше согласие</h2>
+
+  <div class="card info">
+    <p>Ставя галочку <b>«Я согласен с политикой конфиденциальности»</b> при регистрации, вы подтверждаете:</p>
+    <ul>
+      <li>Вам <b>исполнилось 14 лет</b> (или получено согласие родителей)</li>
+      <li>Вы <b>прочитали</b> эту Политику</li>
+      <li>Вы даёте <b>добровольное согласие</b> на обработку ваших персональных данных</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <p>© 2026 Huddle · Все права защищены</p>
+    <p style="margin-top:8px">
+      <a class="back-btn" href="index.html">← Вернуться в Huddle</a>
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

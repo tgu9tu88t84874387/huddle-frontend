@@ -1,0 +1,65 @@
+# ═══════════════════════════════════════
+# Huddle Frontend — .gitignore
+# ═══════════════════════════════════════
+
+# ─── Vercel ───
+.vercel
+.env*
+!.env.example
+
+# ─── Node.js ───
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# ─── Сборки ───
+dist/
+build/
+out/
+.cache/
+.temp/
+
+# ─── Capacitor / Android ───
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/.idea/
+android/captures/
+android/*.iml
+android/key.properties
+*.keystore
+*.jks
+.capacitor/
+
+# ─── iOS ───
+ios/App/Pods/
+ios/App/build/
+ios/App/DerivedData/
+ios/App/*.xcworkspace/xcuserdata/
+ios/App/*.xcodeproj/xcuserdata/
+
+# ─── Редакторы ───
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── ОС ───
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─── Логи ───
+*.log
+logs/
+*.pid
+*.seed
+
+# ─── Прочее ───
+*.bak
+*.tmp

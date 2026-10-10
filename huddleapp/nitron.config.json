@@ -1,0 +1,19 @@
+{
+  "name": "Huddle",
+  "packageId": "com.huddle.app",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "orientation": "portrait",
+  "statusBar": true,
+  "permissions": [
+    "INTERNET",
+    "CAMERA",
+    "RECORD_AUDIO"
+  ],
+  "network": {
+    "cleartext": false
+  },
+  "webview": {
+    "backButton": "history"
+  }
+}

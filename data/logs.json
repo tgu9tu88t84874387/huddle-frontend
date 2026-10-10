@@ -1,0 +1,36 @@
+[
+  {
+    "id": "log_1791331670972_tvcqql",
+    "userId": null,
+    "username": null,
+    "action": "http_get",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 YaBrowser/26.8.0.0 Safari/537.36",
+    "at": "2026-10-07T00:07:50.972Z",
+    "data": {
+      "path": "/api/admin/stats",
+      "status": 401,
+      "duration": 2
+    }
+  },
+  {
+    "id": "log_1791334478141_29z06f",
+    "userId": null,
+    "username": "e7016920@gmail.com",
+    "action": "ws_register",
+    "ip": "",
+    "userAgent": "",
+    "at": "2026-10-07T00:54:38.141Z",
+    "data": null
+  },
+  {
+    "id": "log_1791335727780_rrvnxq",
+    "userId": null,
+    "username": "e7016920@gmail.com",
+    "action": "ws_register",
+    "ip": "",
+    "userAgent": "",
+    "at": "2026-10-07T01:15:27.780Z",
+    "data": null
+  }
+]

@@ -1,0 +1,62 @@
+{
+  "name": "Huddle",
+  "short_name": "Huddle",
+  "description": "Общение, истории, звонки и файлы в одном месте",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait",
+  "background_color": "#0a0e1a",
+  "theme_color": "#6d5dfc",
+  "lang": "ru",
+  "dir": "ltr",
+  "categories": ["social", "communication"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Чаты",
+      "short_name": "Чаты",
+      "description": "Открыть список чатов",
+      "url": "./?tab=chat"
+    },
+    {
+      "name": "Лента",
+      "short_name": "Лента",
+      "description": "Открыть ленту",
+      "url": "./?tab=feed"
+    },
+    {
+      "name": "Профиль",
+      "short_name": "Профиль",
+      "description": "Открыть профиль",
+      "url": "./?tab=profile"
+    }
+  ]
+}

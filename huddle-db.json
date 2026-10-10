@@ -1,0 +1,24 @@
+{
+  "users": {
+    "researchrich6943": {
+      "username": "ResearchRich6943",
+      "email": "tgu9tu88t8@gmail.com",
+      "phone": "",
+      "passwordHash": "$2a$10$J4mvnZ1sT8chFYf4V/QLVeXaNvNmOndY1xZQ0gajzQdkGevYaoSjq",
+      "avatar": null,
+      "createdAt": "2026-10-05T21:19:43.997Z"
+    },
+    "e7016920@gmail.com": {
+      "username": "e7016920@gmail.com",
+      "email": "e7016920@gmail.com",
+      "phone": "",
+      "passwordHash": "$2a$10$pnOsbYbfSEW1LmsfvFd1GuZv4Do1MqlB9Cal8IHUsJTrnNsaUTAYi",
+      "avatar": null,
+      "createdAt": "2026-10-05T21:23:49.565Z"
+    }
+  },
+  "messages": {},
+  "stories": [],
+  "posts": [],
+  "communities": []
+}
